@@ -53,8 +53,8 @@
     "node": ">=24"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "16.0.0",
-    "@types/node": "^24.9.1",
+    "@next/eslint-plugin-next": "16.0.1",
+    "@types/node": "^24.10.0",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "eslint": "^9.39.1",
@@ -66,5 +66,5 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
-  "packageManager": "pnpm@10.19.0"
+  "packageManager": "pnpm@10.20.0"
 }

@@ -62,8 +62,8 @@ async function securePOST(req: NextRequest) {
     const error: ZodError = parsed.error;
     let errorMessage = "";
 
-    error.errors.map((error) => {
-      errorMessage += error.message + "\n";
+    error.issues.map((issue) => {
+      errorMessage += issue.message + "\n";
     });
 
     return APIResponse({ error: { message: errorMessage } }, 400);
