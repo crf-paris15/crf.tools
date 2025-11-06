@@ -34,7 +34,7 @@
     "libphonenumber-js": "^1.12.24",
     "moment": "^2.30.1",
     "next": "16.0.1",
-    "next-auth": "5.0.0-beta.29",
+    "next-auth": "5.0.0-beta.30",
     "react": "19.2.0",
     "react-apexcharts": "^1.8.0",
     "react-dom": "19.2.0",
