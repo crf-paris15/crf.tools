@@ -26,8 +26,11 @@ export const nukiApiCall = async (
       headers,
       body: body ? JSON.stringify(body) : null,
       signal: AbortSignal.timeout(NUKI_TIMEOUT),
-      cache: "force-cache",
-      next: { revalidate: 60, tags: [`nuki:${lockId}`] },
+      cache: endpoint === "action/advanced" ? "no-cache" : "force-cache",
+      next:
+        endpoint === "action/advanced"
+          ? {}
+          : { revalidate: 60, tags: [`nuki:${lockId}`] },
     });
 
     if (response.ok) {
@@ -36,7 +39,6 @@ export const nukiApiCall = async (
     }
     return { success: false, error: "Nuki API call returned an error" };
   } catch (error) {
-    console.log(error);
     Sentry.captureException(error);
     return { success: false, error: "Nuki API call failed" };
   }

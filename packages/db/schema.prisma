@@ -84,8 +84,9 @@ model Lock {
   logs           Log[]
   authorizations Authorization[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  requests  Request[]
 }
 
 // ------------------------------------------------------
@@ -130,4 +131,20 @@ model Log {
   user          User           @relation(fields: [userId], references: [id])
   lock          Lock           @relation(fields: [lockId], references: [id])
   authorization Authorization? @relation(fields: [authorizationId], references: [id])
+}
+
+// ------------------------------------------------------
+// Internal
+// ------------------------------------------------------
+
+model Request {
+  id      String   @id
+  lockId  Int
+  action  Int
+  success Boolean?
+  error   String?
+
+  lock      Lock     @relation(fields: [lockId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
