@@ -17,7 +17,7 @@
     "@fullcalendar/interaction": "^6.1.19",
     "@fullcalendar/react": "^6.1.19",
     "@repo/db": "workspace:^",
-    "@sentry/nextjs": "^10.22.0",
+    "@sentry/nextjs": "^10.23.0",
     "@sentry/node": "^10.22.0",
     "@tabler/core": "^1.4.0",
     "@tabler/icons": "^3.35.0",
