@@ -268,7 +268,7 @@ const LockAuthorization = async (props: {
                               </span>
                             )
                           ) : (
-                            <span className="badge bg-error-lt">Expiré</span>
+                            <span className="badge bg-error-lt">Inactif</span>
                           )}
                         </td>
                         <td>{authorization.createdBy.name}</td>

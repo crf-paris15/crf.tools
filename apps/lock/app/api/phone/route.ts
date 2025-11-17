@@ -1,5 +1,5 @@
 import { APIResponse } from "@/app/utils/api/actions";
-import { prisma } from "@repo/db";
+import { validatePhoneNumberAccess } from "@/app/utils/api/phone";
 import { NextRequest } from "next/server";
 import { z, ZodError } from "zod";
 
@@ -20,7 +20,19 @@ export async function POST(req: NextRequest) {
       return APIResponse({ error: { message: "Invalid API Secret" } }, 403);
     }
 
-    return APIResponse({ message: "Ok" }, 200);
+    const validation = await validatePhoneNumberAccess(
+      parsed.data.from,
+      parsed.data.to,
+    );
+
+    if (validation.success) {
+      return APIResponse({ message: "Accès autorisé." }, 200);
+    } else {
+      return APIResponse(
+        { error: { message: validation.error.message } },
+        validation.status,
+      );
+    }
   } else {
     const error: ZodError = parsed.error;
     let errorMessage = "";
