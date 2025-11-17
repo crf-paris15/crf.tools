@@ -4,3 +4,6 @@ packages:
   - "packages/**"
   # if required, exclude directories
   - "!**/test/**"
+publicHoistPattern:
+  - "*import-in-the-middle*"
+  - "*require-in-the-middle*"

@@ -303,15 +303,13 @@ const LockAuthorization = async (props: {
       </div>
       {authorizations.map((authorization) => {
         return (
-          <>
-            <DeleteModal
-              id={authorization.id}
-              alert="Cela supprimera ou désactivera définitivement l'autorisation."
-              message="Autorisation supprimée ou désactivée avec succès"
-              url="/api/authorizations/"
-              key={authorization.id}
-            />
-          </>
+          <DeleteModal
+            id={authorization.id}
+            alert="Cela supprimera ou désactivera définitivement l'autorisation."
+            message="Autorisation supprimée ou désactivée avec succès"
+            url="/api/authorizations/"
+            key={authorization.id}
+          />
         );
       })}
     </ContentLayout>
