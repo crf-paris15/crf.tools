@@ -43,6 +43,10 @@
     "db:deploy": {
       "cache": false,
       "env": ["DATABASE_URL"]
+    },
+    "mock": {
+      "cache": false,
+      "persistent": true
     }
   }
 }

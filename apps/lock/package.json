@@ -4,6 +4,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev -p 3001",
+    "mock": "pnpx ngrok http 3001",
     "start": "next start",
     "lint": "eslint .",
     "preinstall": "npx only-allow pnpm",
