@@ -36,7 +36,7 @@ export const validatePhoneNumberAccess = async (from, to) => {
       },
     });
   } catch {
-    prisma.log.create({
+    await prisma.log.create({
       data: {
         lock: {
           connect: { id: lock.id },
@@ -113,7 +113,7 @@ export const validatePhoneNumberAccess = async (from, to) => {
       status: 200,
     };
   } catch {
-    prisma.log.create({
+    await prisma.log.create({
       data: {
         user: { connect: { id: user.id } },
         lock: { connect: { id: lock.id } },
