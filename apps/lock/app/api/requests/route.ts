@@ -60,8 +60,13 @@ export async function POST(req: NextRequest) {
         await prisma.log.create({
           data: {
             lock: { connect: { id: lock.id } },
-            action: parsed.state?.state,
-            details: JSON.stringify(parsed),
+            action:
+              parsed.state?.state === 1
+                ? 2
+                : parsed.state?.state === 3
+                  ? 1
+                  : 254,
+            source: "Nuki API",
           },
         });
       }
@@ -77,7 +82,7 @@ export async function POST(req: NextRequest) {
 
   if (parsed.requestId) {
     try {
-      await prisma.request.update({
+      const request = await prisma.request.update({
         where: {
           id: parsed.requestId.toString(),
         },
@@ -86,6 +91,18 @@ export async function POST(req: NextRequest) {
           error: parsed.errorCode || null,
         },
       });
+
+      if (request.logId) {
+        await prisma.log.update({
+          where: {
+            id: request.logId,
+          },
+          data: {
+            success: parsed.success || false,
+            details: parsed.errorCode || null,
+          },
+        });
+      }
 
       return APIResponse({ message: "Request updated successfully" }, 200);
     } catch {

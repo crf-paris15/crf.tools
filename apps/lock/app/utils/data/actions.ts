@@ -130,5 +130,76 @@ export async function generateMetadataCustom(
   };
 }
 
+export const checkNukiAction = async (
+  requestId: string,
+  lastTime: boolean = false,
+) => {
+  setTimeout(() => {
+    const formData = new URLSearchParams();
+    formData.append("apiSecret", process.env.API_SECRET || "");
+
+    fetch(`/api/requests/${requestId}`, {
+      method: "POST",
+      body: formData,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (data.success) {
+          if (data.request.success) {
+            toast(false, "Action effectuée avec succès");
+          } else if (data.request.success === false) {
+            toast(
+              true,
+              "Erreur : " +
+                (data.request.error === "42"
+                  ? "Moteur bloqué, la porte n'est probablement pas claquée."
+                  : "Inconnue"),
+            );
+          } else {
+            if (!lastTime) {
+              checkNukiAction(requestId, true);
+            } else {
+              toast(true, "La serrure n'a pas répondu à la demande.");
+            }
+          }
+        } else {
+          toast(true, data.error.message);
+        }
+      })
+      .catch((err) => {
+        toast(true, err.message);
+      });
+  }, 3500);
+};
+
+export const sendNukiAction = async (lockId: number, action: number) => {
+  const formData = new URLSearchParams();
+  formData.append("action", String(action));
+
+  try {
+    const response = await fetch(`/api/locks/${lockId}/nuki/action`, {
+      method: "POST",
+      body: formData,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+      toast(true, data.error.message);
+    } else {
+      toast(false, "Action envoyée avec succès");
+      checkNukiAction(data.request.id);
+    }
+  } catch (error) {
+    toast(true, error.message);
+  }
+};
+
 export const fetcher = (...args: Parameters<typeof fetch>) =>
   fetch(...args).then((res) => res.json());

@@ -1,6 +1,6 @@
 "use client";
 
-import { fetcher } from "@/app/utils/data/actions";
+import { fetcher, sendNukiAction } from "@/app/utils/data/actions";
 import { IconInfoCircle, IconLock, IconLockOpen2 } from "@tabler/icons-react";
 import parsePhoneNumber from "libphonenumber-js";
 import Link from "next/link";
@@ -47,11 +47,19 @@ const LockCard = ({ lock }) => {
           </div>
         </div>
         <div className="d-flex">
-          <a href="#" className="card-btn">
+          <a
+            href="#"
+            className="card-btn"
+            onClick={() => sendNukiAction(lock.id, 2)}
+          >
             <IconLock className="icon me-2 text-muted icon-3" />
             Verrouiller
           </a>
-          <a href="#" className="card-btn">
+          <a
+            href="#"
+            className="card-btn"
+            onClick={() => sendNukiAction(lock.id, 1)}
+          >
             <IconLockOpen2 className="icon me-2 text-muted icon-3" />
             Déverrouiller
           </a>
