@@ -37,7 +37,7 @@ export async function nukiAction(action, lockId, userId, source) {
     return APIResponse({ error: { message: "Lock cannot be found" } }, 400);
   }
 
-  if (action !== 1 && action !== 2) {
+  if (Number(action) !== 1 && Number(action) !== 2) {
     return APIResponse(
       { error: { message: "Action must be 1 (unlock) or 2 (lock)" } },
       400,
@@ -63,7 +63,7 @@ export async function nukiAction(action, lockId, userId, source) {
       try {
         const log = await prisma.log.create({
           data: {
-            lock: { connect: { id: lockId } },
+            lock: { connect: { id: Number(lockId) } },
             user: { connect: { id: userId } },
             action,
             source,
@@ -73,7 +73,7 @@ export async function nukiAction(action, lockId, userId, source) {
         const request = await prisma.request.create({
           data: {
             id: nukiData.data.requestId,
-            lock: { connect: { id: lockId } },
+            lock: { connect: { id: Number(lockId) } },
             user: { connect: { id: userId } },
             log: { connect: { id: log.id } },
             action: action,

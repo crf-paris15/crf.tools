@@ -182,19 +182,28 @@ const Lock = async (props: { params: Props }) => {
               return (
                 <tr key={log.id}>
                   <td>
-                    <div className="d-flex py-1 align-items-center">
-                      <span
-                        className="avatar me-2"
-                        style={{
-                          backgroundImage: `url(${log.user.image})`,
-                        }}
-                      ></span>
-                      <div className="flex-fill">
-                        <div className="font-weight-medium">
-                          {log.user.name}
+                    {log.user && (
+                      <div className="d-flex py-1 align-items-center">
+                        <span
+                          className="avatar me-2"
+                          style={{
+                            backgroundImage: `url(${log.user.image})`,
+                          }}
+                        ></span>
+                        <div className="flex-fill">
+                          <div className="font-weight-medium">
+                            {log.user.name}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
+                    {!log.user && (
+                      <div className="d-flex py-1 align-items-center">
+                        <div className="flex-fill">
+                          <div className="font-weight-medium">Inconnu</div>
+                        </div>
+                      </div>
+                    )}
                   </td>
                   <td>{logNumberToText(log.action)}</td>
                   <td>{log.details}</td>
@@ -275,7 +284,7 @@ const Lock = async (props: { params: Props }) => {
                 <div className="card-body">
                   <div className="subheader">Dernière action par</div>
                   <div className="h3 m-0">
-                    {lastAction?.user.name || "Inconnu"} il y a {lastTime}
+                    {lastAction?.user?.name || "Inconnu"} il y a {lastTime}
                   </div>
                 </div>
               </div>
