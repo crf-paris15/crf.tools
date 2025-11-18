@@ -19,7 +19,7 @@ async function securePOST(
 
   if (parsed.success) {
     return nukiAction(
-      parsed.data.action,
+      Number(parsed.data.action),
       (await params).id,
       session.user.id,
       "Admin panel",
