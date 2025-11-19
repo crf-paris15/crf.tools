@@ -114,6 +114,13 @@ async function Header() {
                         <Link className="dropdown-item" href="/dashboard/users">
                           Tous
                         </Link>
+                        <div className="dropdown-divider"></div>
+                        <Link
+                          className="dropdown-item"
+                          href="/dashboard/users/import"
+                        >
+                          Importer en masse
+                        </Link>
                       </div>
                     </li>
                     <li className="nav-item">

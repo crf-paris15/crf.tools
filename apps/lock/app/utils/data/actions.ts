@@ -104,6 +104,39 @@ export async function onSubmit(
   }
 }
 
+export async function onSubmitUsersBulk(data, setIsLoading, setError, router) {
+  setIsLoading(true);
+
+  if (setError) {
+    setError(null);
+  }
+
+  const formData = new FormData();
+  formData.append("file", data.file[0]);
+  formData.append("groupId", data.groupId);
+  formData.append("lockId", data.lockId);
+
+  try {
+    const response = await fetch(`/api/users/bulkAdd`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const result = await response.json();
+
+    if (!result.success) {
+      setError(data.error.message);
+    } else {
+      revalidate("/dashboard/users");
+      router.push("/dashboard/users");
+    }
+  } catch (error) {
+    setError(error.message);
+  } finally {
+    setIsLoading(false);
+  }
+}
+
 export async function generateMetadataCustom(
   id,
   isNumber,
