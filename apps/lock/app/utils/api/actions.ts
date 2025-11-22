@@ -73,17 +73,28 @@ export async function nukiAction(
   if (nukiData.success) {
     if (nukiData.data.error === undefined) {
       try {
-        const log = await prisma.log.create({
-          data: {
-            lock: { connect: { id: Number(lockId) } },
-            user: { connect: { id: userId } },
-            authorization: authorizationId
-              ? { connect: { id: authorizationId } }
-              : null,
-            action,
-            source,
-          },
-        });
+        let log;
+
+        if (authorizationId) {
+          log = await prisma.log.create({
+            data: {
+              lock: { connect: { id: Number(lockId) } },
+              user: { connect: { id: userId } },
+              authorization: { connect: { id: Number(authorizationId) } },
+              action,
+              source,
+            },
+          });
+        } else {
+          log = await prisma.log.create({
+            data: {
+              lock: { connect: { id: Number(lockId) } },
+              user: { connect: { id: userId } },
+              action,
+              source,
+            },
+          });
+        }
 
         const request = await prisma.request.create({
           data: {
