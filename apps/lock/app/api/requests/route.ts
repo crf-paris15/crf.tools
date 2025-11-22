@@ -66,16 +66,28 @@ export async function POST(req: NextRequest) {
           },
         });
 
-        await prisma.log.create({
-          data: {
-            user: user ? { connect: { id: user.id } } : null,
-            lock: { connect: { id: lock.id } },
-            action: parsed.smartlockLog?.action,
-            success: parsed.smartlockLog?.state <= 40,
-            details: user ? null : parsed.smartlockLog?.name,
-            source: 0, // Nuki API
-          },
-        });
+        if (user) {
+          await prisma.log.create({
+            data: {
+              user: { connect: { id: user.id } },
+              lock: { connect: { id: lock.id } },
+              action: parsed.smartlockLog?.action,
+              success: parsed.smartlockLog?.state <= 40,
+              details: user ? null : parsed.smartlockLog?.name,
+              source: 0, // Nuki API
+            },
+          });
+        } else {
+          await prisma.log.create({
+            data: {
+              lock: { connect: { id: lock.id } },
+              action: parsed.smartlockLog?.action,
+              success: parsed.smartlockLog?.state <= 40,
+              details: user ? null : parsed.smartlockLog?.name,
+              source: 0, // Nuki API
+            },
+          });
+        }
       }
 
       return APIResponse({ message: "Log added successfully" }, 200);
