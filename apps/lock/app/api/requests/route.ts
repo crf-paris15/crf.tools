@@ -54,7 +54,17 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    if (reqFromLockCrfNotLongAgo === 0) {
+    const reqFromAdminLockCrfNotLongAgo = await prisma.log.count({
+      where: {
+        lockId: lock.id,
+        source: 1, // Admin panel
+        createdAt: {
+          gt: new Date(Date.now() - 15 * 1000), // 15 seconds ago
+        },
+      },
+    });
+
+    if (reqFromLockCrfNotLongAgo === 0 && reqFromAdminLockCrfNotLongAgo === 0) {
       if (
         parsed.smartlockLog?.action === 2 ||
         parsed.smartlockLog?.action === 1
