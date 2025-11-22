@@ -5,13 +5,12 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
   output   = "generated/client"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // ------------------------------------------------------
@@ -25,6 +24,7 @@ model User {
   emailVerified DateTime?
   image         String?
   phoneNumber   String?
+  nukiAccountId String?   @unique
 
   groupId Int   @default(1)
   group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
@@ -126,7 +126,7 @@ model Log {
   authorizationId Int?
   action          Int?
   success         Boolean?
-  source          String?
+  source          Int?
   details         String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

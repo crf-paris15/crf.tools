@@ -11,6 +11,12 @@ export async function revalidate(path) {
 }
 
 export async function APIResponse(data: any, status = 200) {
+  if (status >= 400) {
+    Sentry.captureMessage(
+      `API Response Error: ${JSON.stringify(data)} with status ${status}`,
+    );
+  }
+
   return new NextResponse(
     JSON.stringify({
       success: status < 400,
@@ -20,7 +26,13 @@ export async function APIResponse(data: any, status = 200) {
   );
 }
 
-export async function nukiAction(action, lockId, userId, source) {
+export async function nukiAction(
+  action,
+  lockId,
+  userId,
+  authorizationId,
+  source,
+) {
   let lock;
 
   try {
@@ -65,6 +77,9 @@ export async function nukiAction(action, lockId, userId, source) {
           data: {
             lock: { connect: { id: Number(lockId) } },
             user: { connect: { id: userId } },
+            authorization: authorizationId
+              ? { connect: { id: authorizationId } }
+              : null,
             action,
             source,
           },

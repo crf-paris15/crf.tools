@@ -10,6 +10,7 @@ const schema = z.object({
   email: z.string().trim().email().optional(),
   phoneNumber: z.string().trim().optional(),
   groupId: z.string().trim(),
+  nukiAccountId: z.string().trim().optional(),
 });
 
 async function securePUT(
@@ -36,6 +37,9 @@ async function securePUT(
         email: parsed.data.email,
         phoneNumber: parsed.data.phoneNumber ? parsed.data.phoneNumber : null,
         groupId: Number(parsed.data.groupId),
+        nukiAccountId: parsed.data.nukiAccountId
+          ? parsed.data.nukiAccountId
+          : null,
       },
     });
 

@@ -31,7 +31,8 @@ export async function POST(req: NextRequest) {
         Number(parsed.data.action),
         validation.lockId,
         validation.userId,
-        "Twilio",
+        validation.authorizationId,
+        2, // Twilio
       );
     } else {
       return APIResponse(

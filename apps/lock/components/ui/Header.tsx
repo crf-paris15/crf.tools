@@ -1,12 +1,7 @@
 import { auth } from "auth";
 import { prisma } from "@repo/db";
 import { SignOutButton } from "@/components/auth/SignOutButton";
-import {
-  IconCircleKey,
-  IconLogs,
-  IconSearch,
-  IconUsers,
-} from "@tabler/icons-react";
+import { IconCircleKey, IconUsers } from "@tabler/icons-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -28,6 +23,10 @@ async function Header() {
       },
     },
   });
+
+  if (user === null) {
+    redirect("/auth/signout");
+  }
 
   return (
     <div className="page">
@@ -123,37 +122,7 @@ async function Header() {
                         </Link>
                       </div>
                     </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" href="/dashboard/logs">
-                        <span className="nav-link-icon d-md-none d-lg-inline-block">
-                          <IconLogs className="Icon" />
-                        </span>
-                        <span className="nav-link-title">Journaux</span>
-                      </Link>
-                    </li>
                   </ul>
-                </div>
-                <div className="col-3 d-none d-xxl-block">
-                  <div className="my-3 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
-                    <form
-                      action="/dashboard/search"
-                      method="get"
-                      autoComplete="off"
-                      noValidate={true}
-                    >
-                      <div className="input-icon">
-                        <span className="input-icon-addon">
-                          <IconSearch className="Icon" />
-                        </span>
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Rechercher..."
-                          aria-label="Search in website"
-                        />
-                      </div>
-                    </form>
-                  </div>
                 </div>
               </div>
             </div>

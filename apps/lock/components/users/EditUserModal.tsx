@@ -32,6 +32,7 @@ const EditUserModal = ({ formProps }) => {
         : formProps.user.email,
       phoneNumber: formProps.user.phoneNumber,
       groupId: formProps.user.groupId,
+      nukiAccountId: formProps.user.nukiAccountId,
     },
   });
 
@@ -139,6 +140,19 @@ const EditUserModal = ({ formProps }) => {
                       value={options.find((c) => c.value === field.value)}
                     />
                   )}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label" htmlFor="nukiAccountId">
+                  ID du compte Nuki
+                </label>
+                <input
+                  id="nukiAccountId"
+                  type="text"
+                  className="form-control"
+                  placeholder="1234567890abcdef12345678"
+                  {...register("nukiAccountId")}
                 />
               </div>
             </div>

@@ -5,10 +5,10 @@ import { redirect } from "next/navigation";
 
 export async function logNumberToText(number) {
   switch (number) {
-    case 0:
-      return "Verrouillage";
     case 1:
       return "Déverrouillage";
+    case 2:
+      return "Verrouillage";
     default:
       return "Action inconnue";
   }

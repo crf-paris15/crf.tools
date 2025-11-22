@@ -25,23 +25,26 @@ export async function POST(req: NextRequest) {
     return APIResponse({ error: { message: "Request body is invalid" } }, 422);
   }
 
-  if (!parsed.smartlockId) {
-    return APIResponse({ error: { message: "smartlockId is required" } }, 400);
+  if (!parsed.smartlockLog?.smartlockId && !parsed.smartlockId) {
+    return APIResponse({ error: { message: "Smartlook ID is required" } }, 400);
   }
 
   let lock;
+  const smartlockId = parsed.smartlockLog?.smartlockId
+    ? parsed.smartlockLog?.smartlockId
+    : parsed.smartlockId;
 
   try {
     lock = await prisma.lock.findFirstOrThrow({
       where: {
-        nukiId: parsed.smartlockId.toString(),
+        nukiId: smartlockId.toString(),
       },
     });
   } catch {
     return APIResponse({ error: { message: "Lock cannot be found" } }, 400);
   }
 
-  if (parsed.feature === "DEVICE_STATUS") {
+  if (parsed.feature === "DEVICE_LOGS") {
     const reqFromLockCrfNotLongAgo = await prisma.request.count({
       where: {
         lockId: lock.id,
@@ -53,20 +56,24 @@ export async function POST(req: NextRequest) {
 
     if (reqFromLockCrfNotLongAgo === 0) {
       if (
-        parsed.state?.state === 1 ||
-        parsed.state?.state === 3 ||
-        parsed.state?.state === 254
+        parsed.smartlockLog?.action === 2 ||
+        parsed.smartlockLog?.action === 1
       ) {
+        const user = await prisma.user.findUnique({
+          select: { id: true },
+          where: {
+            nukiAccountId: parsed.smartlockLog?.authId,
+          },
+        });
+
         await prisma.log.create({
           data: {
+            user: user ? { connect: { id: user.id } } : null,
             lock: { connect: { id: lock.id } },
-            action:
-              parsed.state?.state === 1
-                ? 2
-                : parsed.state?.state === 3
-                  ? 1
-                  : 254,
-            source: "Nuki API",
+            action: parsed.smartlockLog?.action,
+            success: parsed.smartlockLog?.state <= 40,
+            details: user ? null : parsed.smartlockLog?.name,
+            source: 0, // Nuki API
           },
         });
       }

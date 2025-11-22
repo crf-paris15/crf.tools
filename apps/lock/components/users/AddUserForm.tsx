@@ -138,6 +138,21 @@ const AddUserForm = ({ groups }) => {
                     </div>
                   </div>
                 </div>
+
+                <div className="col-xl-6 col-sm-12">
+                  <div className="mb-3">
+                    <label className="form-label" htmlFor="nukiAccountId">
+                      ID du compte Nuki
+                    </label>
+                    <input
+                      id="nukiAccountId"
+                      type="text"
+                      className="form-control"
+                      placeholder="1234567890abcdef12345678"
+                      {...register("nukiAccountId")}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
             <div className="card-footer text-end">

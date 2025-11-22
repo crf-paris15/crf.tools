@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import ContentLayout from "@/components/ui/ContentLayout";
-import { IconMoodEmpty, IconPlus } from "@tabler/icons-react";
+import { IconMoodEmpty, IconPlus, IconUser } from "@tabler/icons-react";
 import { prisma } from "@repo/db";
 import parsePhoneNumber from "libphonenumber-js";
 import EditUserModal from "@/components/users/EditUserModal";
 import DeleteModal from "@/components/ui/DeleteModal";
 import Pagination from "@/components/ui/Pagination";
 import { auth } from "auth";
+import SearchInput from "@/components/ui/SearchInput";
 
 // Metadata
 
@@ -36,9 +37,36 @@ const Users = async (props: {
 
   const urlParams = await props.searchParams;
   const guests = urlParams.guests;
+  const search = urlParams?.search || "";
+
   const currentPage = Number(urlParams?.page) || 1;
   const totalPages = await prisma.user
-    .count()
+    .count({
+      where: {
+        groupId:
+          guests === "1"
+            ? 0
+            : guests === "0"
+              ? {
+                  not: 0,
+                }
+              : undefined,
+        OR: [
+          {
+            name: {
+              contains: String(search),
+              mode: "insensitive",
+            },
+          },
+          {
+            phoneNumber: {
+              contains: String(search),
+              mode: "insensitive",
+            },
+          },
+        ],
+      },
+    })
     .then((count) => Math.ceil(count / USERS_PER_PAGE));
 
   const session = await auth();
@@ -50,6 +78,7 @@ const Users = async (props: {
       email: true,
       phoneNumber: true,
       image: true,
+      nukiAccountId: true,
       group: {
         select: {
           name: true,
@@ -79,6 +108,20 @@ const Users = async (props: {
                 not: 0,
               }
             : undefined,
+      OR: [
+        {
+          name: {
+            contains: String(search),
+            mode: "insensitive",
+          },
+        },
+        {
+          phoneNumber: {
+            contains: String(search),
+            mode: "insensitive",
+          },
+        },
+      ],
     },
     orderBy: {
       name: "asc",
@@ -93,150 +136,6 @@ const Users = async (props: {
       name: true,
     },
   });
-
-  // If no users are found
-
-  let usersJSX = (
-    <div className="col-12">
-      <div className="card">
-        <div className="empty">
-          <div className="empty-icon">
-            <IconMoodEmpty className="icon" />
-          </div>
-          <p className="empty-title">C&apos;est vide...</p>
-          <p className="empty-subtitle text-secondary">
-            Si vous pensez qu&apos;il s&apos;agit d&apos;une erreur, signalez-le
-            au plus vite.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-
-  // Otherwise, display users
-
-  if (users.length !== 0) {
-    usersJSX = (
-      <div className="col-12">
-        <div className="card">
-          <div className="table-responsive">
-            <table className="table table-vcenter card-table">
-              <thead>
-                <tr>
-                  <th>Utilisateur</th>
-                  <th>Groupe</th>
-                  <th>Accès</th>
-                  <th className="w-1"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => {
-                  let color = "grey";
-
-                  if (user.groupId === 1) {
-                    color = "blue";
-                  } else if (user.groupId === 2) {
-                    color = "green";
-                  } else if (user.groupId === 3) {
-                    color = "red";
-                  }
-
-                  return (
-                    <tr key={user.id}>
-                      <td>
-                        <div className="d-flex py-1 align-items-center">
-                          <span
-                            className="avatar me-2"
-                            style={{ backgroundImage: `url(${user.image})` }}
-                          ></span>
-                          <div className="flex-fill">
-                            <div className="font-weight-medium">
-                              {user.name}
-                            </div>
-                            <div className="text-secondary">
-                              {user.phoneNumber &&
-                                parsePhoneNumber(
-                                  user.phoneNumber,
-                                ).formatInternational()}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td>
-                        <div>
-                          <span
-                            className={
-                              "badge bg-" + color + " text-" + color + "-fg"
-                            }
-                          >
-                            {user.group.name}
-                          </span>
-                        </div>
-                      </td>
-
-                      <td>
-                        <div className="badges-list">
-                          {user.authorizations.length === 0 && "Aucun"}
-                          {user.authorizations
-                            .filter(
-                              (authorization, index, self) =>
-                                index ===
-                                self.findIndex(
-                                  (a) => a.lock.id === authorization.lock.id,
-                                ),
-                            )
-                            .map((authorization) => {
-                              return (
-                                <span key={authorization.lock.id}>
-                                  <span className="badge">
-                                    {authorization.lock.name}
-                                  </span>{" "}
-                                </span>
-                              );
-                            })}
-                        </div>
-                      </td>
-
-                      <td>
-                        <div
-                          className="btn-list flex-nowrap"
-                          style={{ flexDirection: "row-reverse" }}
-                        >
-                          <button
-                            className="btn"
-                            data-bs-toggle="modal"
-                            data-bs-target={"#modal-edit-" + user.id}
-                          >
-                            &Eacute;diter
-                          </button>
-                          {user._count.logs === 0 &&
-                            user.id !== session.user.id && (
-                              <button
-                                className="btn"
-                                data-bs-toggle="modal"
-                                data-bs-target={"#modal-delete-" + user.id}
-                              >
-                                Supprimer
-                              </button>
-                            )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          classNames="mt-4 justify-content-center"
-        />
-      </div>
-    );
-  }
 
   // Page data
 
@@ -271,7 +170,185 @@ const Users = async (props: {
 
   return (
     <ContentLayout subHeaderProps={pageData}>
-      <div className="row">{usersJSX}</div>
+      <div className="row">
+        <div className="col-12">
+          <div className="card">
+            <div className="card-table">
+              <div className="card-header">
+                <div className="row w-full">
+                  <div className="col">
+                    <h3 className="card-title mb-0">Liste des utilisateurs</h3>
+                    <p className="text-secondary m-0">
+                      Utilisez le champ de recherche pour trouver un utilisateur
+                      par son nom ou son numéro de téléphone (sans le zéro
+                      initial et sans espace).
+                    </p>
+                  </div>
+                  <div className="col-md-auto col-sm-12">
+                    <div className="ms-auto d-flex flex-wrap btn-list">
+                      <SearchInput />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="advanced-table">
+                <div className="table-responsive">
+                  <table className="table table-vcenter card-table">
+                    <thead>
+                      <tr>
+                        <th>Utilisateur</th>
+                        <th>Groupe</th>
+                        <th>Accès</th>
+                        <th className="w-1"></th>
+                      </tr>
+                    </thead>
+                    <tbody className="table-tbody">
+                      {users.length === 0 ? (
+                        <tr>
+                          <td colSpan={8}>
+                            <div className="empty m-2">
+                              <div className="empty-icon">
+                                <IconMoodEmpty className="icon" />
+                              </div>
+                              <p className="empty-title">
+                                Aucun utilisateur trouvé...
+                              </p>
+                              <p className="empty-subtitle text-secondary">
+                                Si vous pensez qu&apos;il s&apos;agit d&apos;une
+                                erreur, signalez-le au plus vite.
+                              </p>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        <></>
+                      )}
+                      {users.map((user) => {
+                        let color = "grey";
+
+                        if (user.groupId === 1) {
+                          color = "blue";
+                        } else if (user.groupId === 2) {
+                          color = "green";
+                        } else if (user.groupId === 3) {
+                          color = "red";
+                        }
+
+                        return (
+                          <tr key={user.id}>
+                            <td>
+                              <div className="d-flex py-1 align-items-center">
+                                {user.image && (
+                                  <span
+                                    className="avatar me-2"
+                                    style={{
+                                      backgroundImage: `url(${user.image})`,
+                                    }}
+                                  ></span>
+                                )}
+                                {!user.image && (
+                                  <span className="avatar me-2">
+                                    <IconUser className="icon avatar-icon icon-2" />
+                                  </span>
+                                )}
+                                <div className="flex-fill">
+                                  <div className="font-weight-medium">
+                                    {user.name}
+                                  </div>
+                                  <div className="text-secondary">
+                                    {user.phoneNumber &&
+                                      parsePhoneNumber(
+                                        user.phoneNumber,
+                                      ).formatInternational()}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+
+                            <td>
+                              <div>
+                                <span
+                                  className={
+                                    "badge bg-" +
+                                    color +
+                                    " text-" +
+                                    color +
+                                    "-fg"
+                                  }
+                                >
+                                  {user.group.name}
+                                </span>
+                              </div>
+                            </td>
+
+                            <td>
+                              <div className="badges-list">
+                                {user.authorizations.length === 0 && "Aucun"}
+                                {user.authorizations
+                                  .filter(
+                                    (authorization, index, self) =>
+                                      index ===
+                                      self.findIndex(
+                                        (a) =>
+                                          a.lock.id === authorization.lock.id,
+                                      ),
+                                  )
+                                  .map((authorization) => {
+                                    return (
+                                      <span key={authorization.lock.id}>
+                                        <span className="badge">
+                                          {authorization.lock.name}
+                                        </span>{" "}
+                                      </span>
+                                    );
+                                  })}
+                              </div>
+                            </td>
+
+                            <td>
+                              <div
+                                className="btn-list flex-nowrap"
+                                style={{ flexDirection: "row-reverse" }}
+                              >
+                                <button
+                                  className="btn"
+                                  data-bs-toggle="modal"
+                                  data-bs-target={"#modal-edit-" + user.id}
+                                >
+                                  &Eacute;diter
+                                </button>
+                                {user._count.logs === 0 &&
+                                  user.id !== session.user.id && (
+                                    <button
+                                      className="btn"
+                                      data-bs-toggle="modal"
+                                      data-bs-target={
+                                        "#modal-delete-" + user.id
+                                      }
+                                    >
+                                      Supprimer
+                                    </button>
+                                  )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="card-footer d-flex align-items-center">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    classNames="m-0 ms-auto"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {users.map((user) => {
         return (

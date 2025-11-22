@@ -22,7 +22,8 @@ async function securePOST(
       Number(parsed.data.action),
       (await params).id,
       session.user.id,
-      "Admin panel",
+      null,
+      1, // Admin panel
     );
   } else {
     const error: ZodError = parsed.error;

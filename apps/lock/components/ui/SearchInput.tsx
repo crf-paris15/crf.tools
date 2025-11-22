@@ -28,7 +28,7 @@ function SearchInput() {
         onChange={(e) => {
           handleSearchDebounce(e.target.value);
         }}
-        defaultValue={params.get("searc")?.toString()}
+        defaultValue={params.get("search")?.toString()}
       />
     </div>
   );

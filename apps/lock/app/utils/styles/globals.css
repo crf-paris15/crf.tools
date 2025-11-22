@@ -37,6 +37,10 @@ body {
   --fc-now-indicator-color: red;
 }
 
+html {
+  margin: 0 !important;
+}
+
 .toastify-custom {
   border-radius: 5px;
 }

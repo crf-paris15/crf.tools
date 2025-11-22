@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IconMoodEmpty } from "@tabler/icons-react";
+import { IconLogs, IconMoodEmpty } from "@tabler/icons-react";
 import { prisma } from "@repo/db";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -7,12 +7,11 @@ import clsx from "clsx";
 import parsePhoneNumber from "libphonenumber-js";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
-import {
-  generateMetadataCustom,
-  logNumberToText,
-} from "@/app/utils/data/actions";
+import { generateMetadataCustom } from "@/app/utils/data/actions";
 import EditLockModal from "@/components/locks/EditLockModal";
 import LockHeader from "@/components/locks/LockHeader";
+import RowLog from "@/components/logs/RowLog";
+import HeaderRowLog from "@/components/logs/HeaderRowLog";
 
 type Props = Promise<{ id: string }>;
 
@@ -48,6 +47,8 @@ const Lock = async (props: { params: Props }) => {
             action: true,
             details: true,
             createdAt: true,
+            success: true,
+            source: true,
             user: {
               select: {
                 id: true,
@@ -59,7 +60,7 @@ const Lock = async (props: { params: Props }) => {
           orderBy: {
             createdAt: "desc",
           },
-          take: 20,
+          take: 6,
         },
       },
       where: {
@@ -168,52 +169,12 @@ const Lock = async (props: { params: Props }) => {
   if (lock.logs.length !== 0) {
     logsJSX = (
       <div className="card-table table-responsive">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Personne</th>
-              <th>Action</th>
-              <th>Détails</th>
-              <th>Date et heure</th>
-            </tr>
-          </thead>
+        <table className="table table-vcenter">
+          <HeaderRowLog />
           <tbody>
-            {lock.logs.map((log) => {
-              return (
-                <tr key={log.id}>
-                  <td>
-                    {log.user && (
-                      <div className="d-flex py-1 align-items-center">
-                        <span
-                          className="avatar me-2"
-                          style={{
-                            backgroundImage: `url(${log.user.image})`,
-                          }}
-                        ></span>
-                        <div className="flex-fill">
-                          <div className="font-weight-medium">
-                            {log.user.name}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    {!log.user && (
-                      <div className="d-flex py-1 align-items-center">
-                        <div className="flex-fill">
-                          <div className="font-weight-medium">Inconnu</div>
-                        </div>
-                      </div>
-                    )}
-                  </td>
-                  <td>{logNumberToText(log.action)}</td>
-                  <td>{log.details}</td>
-                  <td>
-                    {log.createdAt.toLocaleDateString()} à{" "}
-                    {log.createdAt.toLocaleTimeString()}
-                  </td>
-                </tr>
-              );
-            })}
+            {lock.logs.map((log) => (
+              <RowLog key={log.id} {...log} />
+            ))}
           </tbody>
         </table>
       </div>
@@ -292,6 +253,15 @@ const Lock = async (props: { params: Props }) => {
 
             <div className="col-12">
               <div className="card">{logsJSX}</div>
+            </div>
+          </div>
+
+          <div className="d-flex mt-2">
+            <div className="col-md-auto ms-auto d-print-none">
+              <Link className="btn" href={`/dashboard/locks/${lock.id}/logs`}>
+                <IconLogs className="icon btn-icon-start" />
+                Voir tous les logs
+              </Link>
             </div>
           </div>
         </div>

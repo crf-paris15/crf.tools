@@ -9,7 +9,8 @@ const schema = z.object({
   name: z.string().trim().min(1, "Le nom est requis"),
   groupId: z.string().trim().min(1, "Le groupe est requis"),
   email: z.string().trim().email().optional(),
-  phoneNumber: z.string().optional(),
+  phoneNumber: z.string().trim().optional(),
+  nukiAccountId: z.string().trim().optional(),
 });
 
 async function securePOST(req: NextRequest) {
@@ -24,6 +25,7 @@ async function securePOST(req: NextRequest) {
     }
 
     let userNumberWithThisPhone = 0;
+    let userNumberWithNukiAccountId = 0;
 
     if (parsed.data.phoneNumber !== undefined) {
       userNumberWithThisPhone = await prisma.user.count({
@@ -33,7 +35,15 @@ async function securePOST(req: NextRequest) {
       });
     }
 
-    if (userNumberWithThisPhone === 0) {
+    if (parsed.data.nukiAccountId !== undefined) {
+      userNumberWithNukiAccountId = await prisma.user.count({
+        where: {
+          nukiAccountId: parsed.data.nukiAccountId,
+        },
+      });
+    }
+
+    if (userNumberWithThisPhone === 0 && userNumberWithNukiAccountId === 0) {
       const user = await prisma.user.create({
         data: {
           name: parsed.data.name,
@@ -44,6 +54,9 @@ async function securePOST(req: NextRequest) {
             },
           },
           phoneNumber: parsed.data.phoneNumber ? parsed.data.phoneNumber : null,
+          nukiAccountId: parsed.data.nukiAccountId
+            ? parsed.data.nukiAccountId
+            : null,
         },
       });
 
@@ -52,7 +65,8 @@ async function securePOST(req: NextRequest) {
       return APIResponse(
         {
           error: {
-            message: "Un utilisateur avec ce numéro de téléphone existe déjà.",
+            message:
+              "Un utilisateur avec ce numéro de téléphone ou cet ID de compte Nuki existe déjà.",
           },
         },
         400,

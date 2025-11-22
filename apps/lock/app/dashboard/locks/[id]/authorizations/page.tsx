@@ -71,6 +71,12 @@ const LockAuthorization = async (props: {
       .count({
         where: {
           lockId: lock.id,
+          user: {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
         },
       })
       .then((count) => Math.ceil(count / AUTHORIZATIONS_PER_PAGE));
@@ -177,7 +183,7 @@ const LockAuthorization = async (props: {
           </div>
           <div id="advanced-table">
             <div className="table-responsive">
-              <table className="table table-vcenter table-selectable">
+              <table className="table table-vcenter">
                 <thead>
                   <tr>
                     <th>Utilisateur</th>
