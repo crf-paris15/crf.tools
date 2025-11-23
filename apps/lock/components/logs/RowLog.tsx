@@ -74,6 +74,10 @@ const RowLog = (log) => (
       ) : log.success === false ? (
         log.details == 42 ? (
           <span className="badge bg-red text-red-fg">Moteur bloqué</span>
+        ) : log.details === "Date" ? (
+          <span className="badge bg-red text-red-fg">
+            Interdit à cette date
+          </span>
         ) : (
           <span className="badge bg-red text-red-fg">Échec</span>
         )
