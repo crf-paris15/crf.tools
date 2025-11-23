@@ -9,6 +9,8 @@ export async function logNumberToText(number) {
       return "Déverrouillage";
     case 2:
       return "Verrouillage";
+    case null:
+      return "Appel";
     default:
       return "Action inconnue";
   }

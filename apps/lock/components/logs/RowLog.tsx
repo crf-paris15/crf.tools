@@ -6,8 +6,10 @@ import {
   IconLock,
   IconLockOpen2,
   IconPhone,
+  IconPhoneOutgoing,
   IconQuestionMark,
   IconUser,
+  IconX,
 } from "@tabler/icons-react";
 
 const RowLog = (log) => (
@@ -37,7 +39,11 @@ const RowLog = (log) => (
         <div className="d-flex py-1 align-items-center">
           <span className="avatar avatar-sm me-2">
             {log.details ? (
-              <IconQuestionMark className="icon avatar-icon icon-2" />
+              log.details.startsWith("+") ? (
+                <IconX className="icon avatar-icon icon-2" />
+              ) : (
+                <IconQuestionMark className="icon avatar-icon icon-2" />
+              )
             ) : (
               <IconGhost3 className="icon avatar-icon icon-2" />
             )}
@@ -55,6 +61,8 @@ const RowLog = (log) => (
         <IconLockOpen2 className="icon me-1" />
       ) : log.action === 2 ? (
         <IconLock className="icon me-1" />
+      ) : log.action === null ? (
+        <IconPhoneOutgoing className="icon me-1" />
       ) : (
         <IconQuestionMark className="icon me-1" />
       )}
@@ -69,15 +77,25 @@ const RowLog = (log) => (
         ) : (
           <span className="badge bg-red text-red-fg">Échec</span>
         )
+      ) : log.action === null ? (
+        log.details === "Date" ? (
+          <span className="badge bg-red text-red-fg">
+            Interdit à cette date
+          </span>
+        ) : (
+          <span className="badge bg-red text-red-fg">Interdit</span>
+        )
       ) : (
         <span className="badge bg-grey">Inconnu</span>
       )}
     </td>
     <td>
-      {log.createdAt.toLocaleDateString("fr-FR")} à{" "}
+      {log.createdAt.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" })}{" "}
+      à{" "}
       {log.createdAt.toLocaleTimeString("fr-FR", {
         hour: "2-digit",
         minute: "2-digit",
+        timeZone: "Europe/Paris",
       })}
     </td>
     <td className="text-center">

@@ -42,6 +42,7 @@ export const validatePhoneNumberAccess = async (from, to) => {
           connect: { id: lock.id },
         },
         details: from,
+        source: 2, // Twilio
       },
     });
 
@@ -59,6 +60,7 @@ export const validatePhoneNumberAccess = async (from, to) => {
         user: {
           id: user.id,
         },
+        active: true,
         OR: [
           {
             AND: [
@@ -117,6 +119,9 @@ export const validatePhoneNumberAccess = async (from, to) => {
       data: {
         user: { connect: { id: user.id } },
         lock: { connect: { id: lock.id } },
+        success: false,
+        details: "Date",
+        source: 2, // Twilio
       },
     });
 
