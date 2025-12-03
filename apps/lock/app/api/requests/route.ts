@@ -69,32 +69,43 @@ export async function POST(req: NextRequest) {
         parsed.smartlockLog?.action === 2 ||
         parsed.smartlockLog?.action === 1
       ) {
-        const user = await prisma.user.findUnique({
-          select: { id: true },
-          where: {
-            nukiAccountId: parsed.smartlockLog?.authId,
-          },
-        });
-
-        if (user) {
-          await prisma.log.create({
-            data: {
-              user: { connect: { id: user.id } },
-              lock: { connect: { id: lock.id } },
-              action: parsed.smartlockLog?.action,
-              success: parsed.smartlockLog?.state <= 40,
-              details: user ? null : parsed.smartlockLog?.name,
-              source: 0, // Nuki API
+        if (parsed.smartlockLog?.authId) {
+          const user = await prisma.user.findUnique({
+            select: { id: true },
+            where: {
+              nukiAccountId: parsed.smartlockLog?.authId,
             },
           });
+
+          if (user) {
+            await prisma.log.create({
+              data: {
+                user: { connect: { id: user.id } },
+                lock: { connect: { id: lock.id } },
+                action: parsed.smartlockLog?.action,
+                success: parsed.smartlockLog?.state <= 40,
+                details: user ? null : parsed.smartlockLog?.name,
+                source: 0, // Nuki API
+              },
+            });
+          } else {
+            await prisma.log.create({
+              data: {
+                lock: { connect: { id: lock.id } },
+                action: parsed.smartlockLog?.action,
+                success: parsed.smartlockLog?.state <= 40,
+                details: user ? null : parsed.smartlockLog?.name,
+                source: 0, // Nuki API
+              },
+            });
+          }
         } else {
           await prisma.log.create({
             data: {
               lock: { connect: { id: lock.id } },
               action: parsed.smartlockLog?.action,
               success: parsed.smartlockLog?.state <= 40,
-              details: user ? null : parsed.smartlockLog?.name,
-              source: 0, // Nuki API
+              source: parsed.smartlockLog?.trigger === 2 ? 3 : 255, // Button or Unknown
             },
           });
         }

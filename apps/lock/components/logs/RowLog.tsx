@@ -3,6 +3,7 @@ import {
   IconDeviceDesktopAnalytics,
   IconDeviceMobile,
   IconGhost3,
+  IconHandClick,
   IconLock,
   IconLockOpen2,
   IconPhone,
@@ -44,6 +45,8 @@ const RowLog = (log) => (
               ) : (
                 <IconQuestionMark className="icon avatar-icon icon-2" />
               )
+            ) : log.source === 3 ? (
+              <IconHandClick className="icon avatar-icon icon-2" />
             ) : (
               <IconGhost3 className="icon avatar-icon icon-2" />
             )}
@@ -109,6 +112,8 @@ const RowLog = (log) => (
         <IconDeviceDesktopAnalytics className="icon" />
       ) : log.source === 2 ? (
         <IconPhone className="icon" />
+      ) : log.source === 3 ? (
+        <IconHandClick className="icon" />
       ) : (
         <IconQuestionMark className="icon" />
       )}
