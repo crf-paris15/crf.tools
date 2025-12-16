@@ -123,5 +123,7 @@ export async function nukiAction(
       { error: { message: "Error from Nuki API: " + nukiData.data.error } },
       400,
     );
+  } else {
+    return APIResponse({ error: { message: "Error:" + nukiData.error } }, 500);
   }
 }
