@@ -33,8 +33,8 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0
       '@tabler/icons':
-        specifier: ^3.35.0
-        version: 3.35.0
+        specifier: ^3.36.0
+        version: 3.36.0
       '@tabler/icons-react':
         specifier: ^3.35.0
         version: 3.35.0(react@19.2.3)
@@ -1354,6 +1354,9 @@ packages:
 
   '@tabler/icons@3.35.0':
     resolution: {integrity: sha512-yYXe+gJ56xlZFiXwV9zVoe3FWCGuZ/D7/G4ZIlDtGxSx5CGQK110wrnT29gUj52kEZoxqF7oURTk97GQxELOFQ==}
+
+  '@tabler/icons@3.36.0':
+    resolution: {integrity: sha512-z9OfTEG6QbaQWM9KBOxxUdpgvMUn0atageXyiaSc2gmYm51ORO8Ua7eUcjlks+Dc0YMK4rrodAFdK9SfjJ4ZcA==}
 
   '@tsconfig/node10@1.0.12':
     resolution: {integrity: sha512-UCYBaeFvM11aU2y3YPZ//O5Rhj+xKyzy7mvcIoAjASbigy8mHMryP5cK7dgjlz2hWxh1g5pLw084E0a/wlUSFQ==}
@@ -5115,6 +5118,8 @@ snapshots:
       sharp: 0.33.5
 
   '@tabler/icons@3.35.0': {}
+
+  '@tabler/icons@3.36.0': {}
 
   '@tsconfig/node10@1.0.12': {}
 
