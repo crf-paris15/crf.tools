@@ -7,9 +7,5 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <html lang="fr" data-scroll-behavior="smooth">
-      <body>{children}</body>
-    </html>
-  );
+  return <>{children}</>;
 }
