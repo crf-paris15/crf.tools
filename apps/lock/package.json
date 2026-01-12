@@ -45,7 +45,7 @@
     "toastify-js": "^1.12.0",
     "tom-select": "^2.4.3",
     "twilio": "^5.11.1",
-    "use-debounce": "^10.0.6",
+    "use-debounce": "^10.1.0",
     "zod": "^4.3.5"
   },
   "engines": {
