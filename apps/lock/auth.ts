@@ -5,7 +5,11 @@ import { prisma } from "@repo/db";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma as any),
-  providers: [google],
+  providers: [
+    google({
+      allowDangerousEmailAccountLinking: true,
+    }),
+  ],
   session: {
     strategy: "jwt",
   },
