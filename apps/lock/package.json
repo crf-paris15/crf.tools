@@ -43,7 +43,7 @@
     "require-in-the-middle": "7.5.2",
     "swr": "^2.4.0",
     "toastify-js": "^1.12.0",
-    "tom-select": "^2.4.5",
+    "tom-select": "^2.5.1",
     "twilio": "^5.12.1",
     "use-debounce": "^10.1.0",
     "zod": "^4.3.6"
