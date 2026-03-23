@@ -29,5 +29,8 @@ export default defineConfig([
     plugins: {
       next: eslintNextPlugin,
     },
+    settings: {
+      react: { version: "19" },
+    },
   },
 ]);

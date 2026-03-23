@@ -39,7 +39,7 @@ export async function onSubmit(
       .map(([k, v]) => [k, String(v)]),
   );
 
-  let typeMsg = "";
+  let typeMsg = ""; // eslint-disable-line
   let feminine = false;
 
   switch (type) {
