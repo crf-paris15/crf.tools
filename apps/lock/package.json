@@ -30,7 +30,7 @@
     "imask": "^7.6.1",
     "import-in-the-middle": "1.15.0",
     "libphonenumber-js": "^1.13.11",
-    "next": "16.3.1",
+    "next": "16.3.0",
     "next-auth": "5.0.0-beta.32",
     "pg": "^8.23.0",
     "pg-pool": "^3.14.0",
