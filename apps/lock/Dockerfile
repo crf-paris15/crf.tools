@@ -3,11 +3,9 @@ FROM node:24-alpine AS alpine
 # ------------------------- BASE -------------------------
 FROM alpine AS base
 ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
+ENV PATH="$PNPM_HOME/bin:$PATH"
 RUN corepack enable pnpm
-RUN pnpm setup
-RUN pnpm install turbo --global
-RUN pnpm install next --global
+RUN pnpm add -g turbo next
 
 # ------------------------- BUILDER -------------------------
 FROM base AS builder
