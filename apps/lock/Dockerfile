@@ -5,7 +5,6 @@ FROM alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable pnpm
-RUN pnpm setup
 RUN pnpm install turbo --global
 RUN pnpm install next --global
 
