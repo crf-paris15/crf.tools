@@ -11,34 +11,62 @@ const schema = z.object({
   endAt: z.string().trim().optional(),
 });
 
+const REGISTER_SIDECAR_ID = process.env.REGISTER_SIDECAR_ID || "";
+
 async function securePOST(req: NextRequest, params: any, session: any) {
   const formData = await req.formData();
 
   const data = Object.fromEntries(formData);
   const parsed = schema.safeParse(data);
 
+  let authorization: any = null;
+
   if (parsed.success) {
-    const authorization = await prisma.authorization.create({
-      data: {
-        lock: {
-          connect: {
-            id: Number(parsed.data.lockId),
+    if (session) {
+      authorization = await prisma.authorization.create({
+        data: {
+          lock: {
+            connect: {
+              id: Number(parsed.data.lockId),
+            },
           },
-        },
-        user: {
-          connect: {
-            id: parsed.data.userId,
+          user: {
+            connect: {
+              id: parsed.data.userId,
+            },
           },
-        },
-        createdBy: {
-          connect: {
-            id: session.user.id,
+          createdBy: {
+            connect: {
+              id: session.user.id,
+            },
           },
+          startAt: parsed.data.startAt ? new Date(parsed.data.startAt) : null,
+          endAt: parsed.data.endAt ? new Date(parsed.data.endAt) : null,
         },
-        startAt: parsed.data.startAt ? new Date(parsed.data.startAt) : null,
-        endAt: parsed.data.endAt ? new Date(parsed.data.endAt) : null,
-      },
-    });
+      });
+    } else {
+      authorization = await prisma.authorization.create({
+        data: {
+          lock: {
+            connect: {
+              id: Number(parsed.data.lockId),
+            },
+          },
+          user: {
+            connect: {
+              id: parsed.data.userId,
+            },
+          },
+          createdBy: {
+            connect: {
+              id: REGISTER_SIDECAR_ID,
+            },
+          },
+          startAt: parsed.data.startAt ? new Date(parsed.data.startAt) : null,
+          endAt: parsed.data.endAt ? new Date(parsed.data.endAt) : null,
+        },
+      });
+    }
 
     return APIResponse(
       { message: "Authorization created successfully", authorization },
